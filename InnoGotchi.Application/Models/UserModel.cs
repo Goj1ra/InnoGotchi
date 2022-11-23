@@ -1,12 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using InnoGotchi.Application.Models.Base;
+using InnoGotchi.Core.Entities;
 
 namespace InnoGotchi.Application.Models
 {
-    internal class UserModel
+    public class UserModel : BaseModel
     {
+        public string Name { get; set; }
+        public string LastName { get; set; }
+        public string Avatar { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public string Token { get; set; }
+        public FarmModel MyOwnFarm { get; set; }
+        public List<PetModel> Pets { get; set; }
     }
 }

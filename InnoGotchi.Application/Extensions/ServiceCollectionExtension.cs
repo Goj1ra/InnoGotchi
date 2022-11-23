@@ -1,12 +1,16 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using InnoGotchi.Application.Services.Implementations;
+using InnoGotchi.Application.Services.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace InnoGotchi.Application.Extensions
 {
-    internal static class ServiceCollectionExtension
+    public static class ServiceCollectionExtension
     {
         public static void AddServices(this IServiceCollection serviceCollection)
         {
-
+            serviceCollection.AddScoped<IUserService, UserService>();
+            serviceCollection.AddScoped<IPetService, PetService>();
+            serviceCollection.AddScoped<IFarmService, FarmService>();
         }
     }
 }

@@ -25,7 +25,7 @@ namespace InnoGotchi.Infrastructure.Data
                 .IsUnique();
 
             builder.HasOne(x => x.User)
-                .WithMany(u => u.MyOwnFarm.Pets)
+                .WithMany(u => u.Pets)
                 .OnDelete(DeleteBehavior.NoAction);
 
             builder.HasOne(x => x.Farm)
@@ -41,24 +41,24 @@ namespace InnoGotchi.Infrastructure.Data
 
             builder.HasOne(x => x.User)
                 .WithOne(x => x.MyOwnFarm)
+                .HasForeignKey<User>(p => p.Id)
                 .OnDelete(DeleteBehavior.NoAction);
 
         }
 
         private void ConfigureUser(EntityTypeBuilder<User> builder)
         {
-            builder.HasMany(x => x.MyOwnFarm.Pets)
+            builder.HasMany(x => x.Pets)
                 .WithOne(u => u.User)
                 .OnDelete(DeleteBehavior.NoAction);
 
+
             builder.HasOne(x => x.MyOwnFarm)
                 .WithOne(x => x.User)
+                .HasForeignKey<Farm>(p => p.Id)
                 .OnDelete(DeleteBehavior.NoAction);
-
         }
-
-
-
+        
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {

@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using InnoGotchi.Application.Models.Base;
+using InnoGotchi.Core.Entities;
 
 namespace InnoGotchi.Application.Models
 {
-    internal class RoleModel
+    public class RoleModel : BaseModel
     {
+        public string Name { get; set; }
+
+        public string Permission { get; set; }
+
+        public List<User> Users { get; set; }
     }
 }
