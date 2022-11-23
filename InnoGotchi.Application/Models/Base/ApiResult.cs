@@ -1,5 +1,4 @@
-﻿
-namespace InnoGotchi.Application.Models.Base
+﻿namespace InnoGotchi.Application.Models.Base
 {
     public class ApiResult<T>
     {

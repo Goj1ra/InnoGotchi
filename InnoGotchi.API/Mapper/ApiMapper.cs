@@ -1,21 +1,21 @@
 ﻿using AutoMapper;
-using InnoGotchi.Application.Mapper.Profiles;
+using InnoGotchi.API.Mapper.Profiles;
 
-namespace InnoGotchi.Application.Mapper
+namespace InnoGotchi.API.Mapper
 {
-    public class ApplicationMapper
+    public class ApiMapper
     {
         private static readonly Lazy<IMapper> Lazy = new(() =>
         {
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.ShouldMapProperty = p => p.GetMethod.IsPublic || p.GetMethod.IsAssembly;
-                cfg.AddProfile<EntityToBusinessModelMapperProfile>();
+                cfg.AddProfile<ApiToBusinessModelMapperProfile>();
             });
             var mapper = config.CreateMapper();
             return mapper;
         });
 
-        public static IMapper Mapper => Lazy.Value;
+        public static IMapper Mapper = Lazy.Value;
     }
 }
