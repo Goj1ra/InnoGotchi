@@ -15,10 +15,10 @@ namespace InnoGotchi.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Body = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                    Eye = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                    Mouth = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                    Nose = table.Column<byte[]>(type: "varbinary(max)", nullable: false)
+                    Body = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Eye = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Mouth = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Nose = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -47,10 +47,11 @@ namespace InnoGotchi.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Avatar = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Avatar = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FarmId = table.Column<int>(type: "int", nullable: false),
+                    PasswordSalt = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FarmId = table.Column<int>(type: "int", nullable: true),
                     RoleId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -69,7 +70,7 @@ namespace InnoGotchi.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false)
+                    UserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -88,10 +89,10 @@ namespace InnoGotchi.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Age = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    HungerLevel = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ThirstyLevel = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    HapinessDaysCount = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Age = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    HungerLevel = table.Column<int>(type: "int", nullable: false),
+                    thirstyLevel = table.Column<int>(type: "int", nullable: false),
+                    HapinessDaysCount = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     FarmId = table.Column<int>(type: "int", nullable: false),
                     PetsBodyId = table.Column<int>(type: "int", nullable: false)

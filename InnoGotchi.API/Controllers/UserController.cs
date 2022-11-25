@@ -1,33 +1,36 @@
-﻿using InnoGotchi.API.Attributes;
-using InnoGotchi.API.Controllers.Base;
+﻿using InnoGotchi.API.Controllers.Base;
 using InnoGotchi.API.Mapper;
 using InnoGotchi.API.ViewModels;
 using InnoGotchi.Application.Models;
 using InnoGotchi.Application.Models.Base;
 using InnoGotchi.Application.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.IO;
 using System.Text.Json;
 
 namespace InnoGotchi.API.Controllers
 {
-    
+    [Authorize]
     public class UserController : ApiController
     {
+        private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IUserService _userService;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IWebHostEnvironment webHostEnvironment)
         {
             _userService = userService;
+            _webHostEnvironment = webHostEnvironment;
         }
 
-        
+        [AllowAnonymous]
         [HttpPost("authenticate")]
-        public IActionResult Login([FromBody] UserLoginViewModel model)
+        public async Task<IActionResult> Login([FromBody] UserLoginViewModel model)
         {
             try
             {
                 var user = ApiMapper.Mapper.Map<UserModel>(model);
-                var response = _userService.Login(user).Result;
+                var response = await _userService.Login(user);
                 var apiResult = ApiResult<UserModel>.Success(response);
                 return Ok(apiResult);
             }
@@ -39,7 +42,7 @@ namespace InnoGotchi.API.Controllers
             
         }
 
-        
+        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<IActionResult> Register ([FromBody] UserRegisterViewModel model)
         {
@@ -57,16 +60,34 @@ namespace InnoGotchi.API.Controllers
             }
         }
 
-        [HttpGet("id")]
-        public async Task<IActionResult> GetUser (int id)
+        [Authorize]
+        [HttpPost("update")]
+        public async Task<IActionResult> UpdateUser([FromForm] UserUpdateViewModel userUpdateViewModel)
         {
             try
             {
-                var user = await _userService.GetUserById(id);
-                var apiResult = ApiResult<UserModel>.Success(user);
+                string pathToFile = " ";
+                if(userUpdateViewModel.files.Length > 0)
+                {
+                    string path = _webHostEnvironment.WebRootPath + "\\uploads\\";
+                    pathToFile = Path.Combine(path, userUpdateViewModel.files.FileName);
+                    if (!Directory.Exists(path))
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+                    using(FileStream fileStream = System.IO.File.Create(path + userUpdateViewModel.files.FileName))
+                    {
+                        userUpdateViewModel.files.CopyTo(fileStream);
+                        fileStream.Flush(); 
+                    }
+                }
+                var user = ApiMapper.Mapper.Map<UserModel>(userUpdateViewModel);
+                user.AvatarPath = pathToFile;
+                var response = await _userService.UpdateUserCredentials(user);
+                var apiResult = ApiResult<UserModel>.Success(response);
                 return Ok(apiResult);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 var apiResult = ApiResult<UserModel>.Failure(new[] { ex.Message });
                 return Problem(detail: JsonSerializer.Serialize(apiResult));

@@ -9,8 +9,8 @@ namespace InnoGotchi.Application.Extensions
         public static void AddServices(this IServiceCollection serviceCollection)
         {
             serviceCollection.AddScoped<IUserService, UserService>();
-            serviceCollection.AddScoped<IPetService, PetService>();
             serviceCollection.AddScoped<IFarmService, FarmService>();
+            serviceCollection.AddScoped<IPetService, PetService>();
         }
     }
 }

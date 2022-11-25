@@ -6,6 +6,7 @@ namespace InnoGotchi.Application.Models
     public class FarmModel : BaseModel
     {
         public string Name { get; set; }
+        public int UserId { get; set; }
         public UserModel User { get; set; }
         public List<PetModel> Pets { get; set; }
     }

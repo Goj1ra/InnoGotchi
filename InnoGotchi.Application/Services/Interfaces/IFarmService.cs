@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+using InnoGotchi.Application.Models;
 
 namespace InnoGotchi.Application.Services.Interfaces
 {
     public interface IFarmService
     {
+        Task<FarmModel> CreateFarm (FarmModel model);
 
     }
 }

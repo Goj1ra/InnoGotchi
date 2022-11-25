@@ -1,9 +1,4 @@
 ﻿using InnoGotchi.Core.Entities.Base;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace InnoGotchi.Core.Entities
 {
@@ -14,9 +9,14 @@ namespace InnoGotchi.Core.Entities
         public string? Avatar { get; set; }
         public string Email { get; set; }
         public string PasswordHash { get; set; }
+        public string PasswordSalt { get; set; }
         public int? FarmId { get; set; }
-        public Farm? MyOwnFarm { get; set; }
-        public List<Pet>? Pets { get; set; }
+        public Farm MyOwnFarm { get; set; }
+        public List<Pet> Pets { get; set; }
+        public User()
+        {
+            Pets = new List<Pet>();
+        }
 
 
     }

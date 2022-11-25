@@ -7,10 +7,11 @@ namespace InnoGotchi.Application.Models
     {
         public string Name { get; set; }
         
-        public string Age { get; set; }
+        public DateTime BornDate  = DateTime.UtcNow;
+        public DateTime Age { get; set; }
         public string HungerLevel { get; set; }
         public string ThirstyLevel { get; set; }
-        public string HapinessDaysCount { get; set; }
+        public DateTime HapinessDaysCount { get; set; }
         public UserModel User { get; set; }
         public FarmModel Farm { get; set; }
         public PetsBodyModel Body { get; set; }

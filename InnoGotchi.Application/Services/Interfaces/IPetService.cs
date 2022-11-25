@@ -1,6 +1,6 @@
 ﻿namespace InnoGotchi.Application.Services.Interfaces
 {
-    public interface IPetService
+    public interface IPetService 
     {
 
     }

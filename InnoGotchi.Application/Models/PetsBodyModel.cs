@@ -4,9 +4,9 @@ namespace InnoGotchi.Application.Models
 {
     public class PetsBodyModel : BaseModel
     {
-        public byte[] Body { get; set; }
-        public byte[] Eye { get; set; }
-        public byte[] Mouth { get; set; }
-        public byte[] Nose { get; set; }
+        public string Body { get; set; }
+        public string Eye { get; set; }
+        public string Mouth { get; set; }
+        public string Nose { get; set; }
     }
 }
