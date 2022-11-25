@@ -1,9 +1,9 @@
-﻿using InnoGotchi.Application.Exceptions;
-using InnoGotchi.Application.Mapper;
+﻿using InnoGotchi.Application.Mapper;
 using InnoGotchi.Application.Models;
 using InnoGotchi.Application.Services.Interfaces;
 using InnoGotchi.Core.Entities;
 using InnoGotchi.Core.Repositories.Base;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -35,34 +35,34 @@ namespace InnoGotchi.Application.Services.Implementations
             return userModel;
         }
 
-        public async Task<UserModel> GetUserById(int id)
-        {
-            var user = await _userRepository.GetFirstOrDefaultAsync(
-                predicate: user => user.Id == id,
-                selector: user => ApplicationMapper.Mapper.Map<User>(user));
-
-
-            if(user == null)
-            {
-                throw new NotFoundException($"User with id {id} not found");
-            }
-
-            var userModel = ApplicationMapper.Mapper.Map<UserModel>(user);
-
-            return userModel;
-        }
-
         public async Task<UserModel> Register(UserModel userModel)
         {
             var user = ApplicationMapper.Mapper.Map<User>(userModel);
-            if(!_userRepository.Exists(user => user.Email != userModel.Email))
+            if(!_userRepository.Exists(user => user.Email == userModel.Email))
             {
                 user.PasswordHash = BCryptNet.HashPassword(userModel.Password);
+                user.PasswordSalt = BCryptNet.GenerateSalt();
                 await _userRepository.InsertAsync(user);
                 await _unitOfWork.SaveChangesAsync();
                 return userModel;
             }
             return null;
+        }
+
+        public async Task<UserModel> UpdateUserCredentials(UserModel userModel)
+        {
+            var curUser = GetCurrentUser(userModel.Id);
+            curUser.Avatar = userModel.AvatarPath;
+            curUser.Name = userModel.Name;
+            curUser.LastName = userModel.LastName;
+            _userRepository.Update(curUser);
+            await _unitOfWork.SaveChangesAsync();
+            return userModel;
+        }
+
+        private User GetCurrentUser (int id)
+        {
+            return _userRepository.Find(id);
         }
 
         private string Generate(User user)

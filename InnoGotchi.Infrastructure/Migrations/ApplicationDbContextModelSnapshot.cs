@@ -31,7 +31,7 @@ namespace InnoGotchi.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -47,20 +47,17 @@ namespace InnoGotchi.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Age")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("Age")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("FarmId")
                         .HasColumnType("int");
 
-                    b.Property<string>("HapinessDaysCount")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("HapinessDaysCount")
+                        .HasColumnType("int");
 
-                    b.Property<string>("HungerLevel")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("HungerLevel")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -69,11 +66,10 @@ namespace InnoGotchi.Infrastructure.Migrations
                     b.Property<int>("PetsBodyId")
                         .HasColumnType("int");
 
-                    b.Property<string>("ThirstyLevel")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("thirstyLevel")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -98,21 +94,21 @@ namespace InnoGotchi.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<byte[]>("Body")
+                    b.Property<string>("Body")
                         .IsRequired()
-                        .HasColumnType("varbinary(max)");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte[]>("Eye")
+                    b.Property<string>("Eye")
                         .IsRequired()
-                        .HasColumnType("varbinary(max)");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte[]>("Mouth")
+                    b.Property<string>("Mouth")
                         .IsRequired()
-                        .HasColumnType("varbinary(max)");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte[]>("Nose")
+                    b.Property<string>("Nose")
                         .IsRequired()
-                        .HasColumnType("varbinary(max)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -167,6 +163,10 @@ namespace InnoGotchi.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PasswordSalt")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -237,7 +237,8 @@ namespace InnoGotchi.Infrastructure.Migrations
 
             modelBuilder.Entity("InnoGotchi.Core.Entities.User", b =>
                 {
-                    b.Navigation("MyOwnFarm");
+                    b.Navigation("MyOwnFarm")
+                        .IsRequired();
 
                     b.Navigation("Pets");
                 });
