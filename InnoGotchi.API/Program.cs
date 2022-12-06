@@ -14,7 +14,6 @@ LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nl
 
 builder.Services.ConfigureFluentValidation();
 
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -26,7 +25,7 @@ builder.Services.AddSwaggerGen(options =>
         Name = "Authorization",
         Description = "Bearer Authentication with Jwt token",
         Type = SecuritySchemeType.Http
-    });
+    });;
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -58,7 +57,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ValidateIssuerSigningKey = true,
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+        ClockSkew = TimeSpan.FromMinutes(0)
     };
 });
 
@@ -90,6 +90,10 @@ if (!app.Environment.IsProduction())
 app.UseCustomExceptionMiddleware();
 
 app.UseHttpsRedirection();
+
+app.UseRouting();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

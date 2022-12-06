@@ -22,6 +22,9 @@ namespace InnoGotchi.Application.Mapper.Profiles
 
             CreateMap<PetsBody, PetsBodyModel>()
                 .ReverseMap();
+
+            CreateMap<UserStatistics, UserStatisticsModel>()
+                .ReverseMap();
         }
     }
 }

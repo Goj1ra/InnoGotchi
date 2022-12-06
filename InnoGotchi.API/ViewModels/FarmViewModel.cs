@@ -2,7 +2,7 @@
 
 namespace InnoGotchi.API.ViewModels
 {
-    public class FarmViewModel
+    public class FarmViewModel 
     {
         public string Name { get; set; }
     }

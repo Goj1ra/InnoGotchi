@@ -14,13 +14,13 @@ namespace InnoGotchi.API.Mapper.Profiles
             CreateMap<UserModel, UserRegisterViewModel>()
                 .ReverseMap();
 
-            CreateMap<UserModel, UserViewModel>()
-                .ReverseMap();
-
             CreateMap<UserModel, UserUpdateViewModel>()
                 .ReverseMap();
 
             CreateMap<FarmModel, FarmViewModel>()
+                .ReverseMap();
+
+            CreateMap<PetModel, PetCreationViewModel>()
                 .ReverseMap();
         }
     }

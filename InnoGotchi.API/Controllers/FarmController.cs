@@ -21,20 +21,15 @@ namespace InnoGotchi.API.Controllers
         }
 
 
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<IActionResult> Create(FarmViewModel farmViewModel)
         {
             try
             {
-                if (User.Identity.IsAuthenticated)
-                {
-                    var farm = ApiMapper.Mapper.Map<FarmModel>(farmViewModel);
-                    farm.User.Name = User.Identity.Name;
-                    var response = await _farmService.CreateFarm(farm);
-                    var apiResult = ApiResult<FarmModel>.Success(response);
-                    return Ok(apiResult);
-                }
-                return BadRequest();
+                var farm = ApiMapper.Mapper.Map<FarmModel>(farmViewModel);
+                var response = await _farmService.CreateFarm(farm);
+                var apiResult = ApiResult<FarmModel>.Success(response);
+                return Ok(apiResult);
             }
             catch (Exception ex)
             {
