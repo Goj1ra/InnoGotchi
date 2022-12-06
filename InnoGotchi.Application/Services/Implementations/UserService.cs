@@ -3,6 +3,7 @@ using InnoGotchi.Application.Models;
 using InnoGotchi.Application.Services.Interfaces;
 using InnoGotchi.Core.Entities;
 using InnoGotchi.Core.Repositories.Base;
+using InnoGotchi.Shared.Paging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -18,11 +19,13 @@ namespace InnoGotchi.Application.Services.Implementations
         private readonly IUnitOfWork _unitOfWork;
         private readonly IConfiguration _configuration;
         private readonly IRepository<User> _userRepository;
+        private readonly IHttpContextAccessor _contextAccessor;
 
-        public UserService(IUnitOfWork unitOfWork, IConfiguration configuration)
+        public UserService(IUnitOfWork unitOfWork, IConfiguration configuration, IHttpContextAccessor contextAccessor)
         {
             _unitOfWork = unitOfWork;
             _configuration = configuration;
+            _contextAccessor = contextAccessor;
             _userRepository = unitOfWork.GetRepository<User>();
         }
 
@@ -51,18 +54,47 @@ namespace InnoGotchi.Application.Services.Implementations
 
         public async Task<UserModel> UpdateUserCredentials(UserModel userModel)
         {
-            var curUser = GetCurrentUser(userModel.Id);
-            curUser.Avatar = userModel.AvatarPath;
-            curUser.Name = userModel.Name;
-            curUser.LastName = userModel.LastName;
-            _userRepository.Update(curUser);
+            var currentUser = GetCurrentUser();
+            currentUser.Avatar = userModel.AvatarPath;
+            currentUser.Name = userModel.Name;
+            currentUser.LastName = userModel.LastName;
+            _userRepository.Update(currentUser);
             await _unitOfWork.SaveChangesAsync();
             return userModel;
         }
 
-        private User GetCurrentUser (int id)
+        public async Task<string> ChangePassword(string oldPassword, string newPassword)
         {
-            return _userRepository.Find(id);
+            var hash = BCryptNet.HashPassword(newPassword);
+            var salt = BCryptNet.GenerateSalt();
+            var currentUser = GetCurrentUser();
+            var isPasswordCorrect = BCryptNet.Verify(oldPassword, currentUser.PasswordHash);
+            if (isPasswordCorrect)
+            {
+                currentUser.PasswordHash = hash;
+                currentUser.PasswordSalt = salt;
+                _userRepository.Update(currentUser);
+                await _unitOfWork.SaveChangesAsync();
+                return "Password successfully updated!";
+            }
+            return "Wrong password";
+        }
+
+        public async Task<IEnumerable<UserModel>> GetUsers(int startIndex, int endIndex)
+        {
+           var users = await _userRepository.GetAllAsync(
+               predicate: user => user.Id >= startIndex && user.Id <= endIndex);
+           
+            var userModels = ApplicationMapper.Mapper.Map<List<UserModel>>(users);
+            return userModels;
+        }
+
+        private User GetCurrentUser()
+        {
+            var claims = _contextAccessor.HttpContext.User;
+            var email = claims.FindFirst(ClaimTypes.Email).Value;
+            return _userRepository.GetFirstOrDefault(
+                predicate: x => x.Email == email);
         }
 
         private string Generate(User user)

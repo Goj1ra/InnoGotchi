@@ -10,8 +10,10 @@ namespace InnoGotchi.Core.Entities
         public string Email { get; set; }
         public string PasswordHash { get; set; }
         public string PasswordSalt { get; set; }
-        public int? FarmId { get; set; }
+        public int FarmId { get; set; }
         public Farm MyOwnFarm { get; set; }
+        public int userStatisticsId { get; set; }
+        public UserStatistics Statistics { get; set; }
         public List<Pet> Pets { get; set; }
         public User()
         {

@@ -4,9 +4,9 @@ using InnoGotchi.API.ViewModels;
 using InnoGotchi.Application.Models;
 using InnoGotchi.Application.Models.Base;
 using InnoGotchi.Application.Services.Interfaces;
+using InnoGotchi.Shared.Paging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.IO;
 using System.Text.Json;
 
 namespace InnoGotchi.API.Controllers
@@ -60,7 +60,6 @@ namespace InnoGotchi.API.Controllers
             }
         }
 
-        [Authorize]
         [HttpPost("update")]
         public async Task<IActionResult> UpdateUser([FromForm] UserUpdateViewModel userUpdateViewModel)
         {
@@ -90,6 +89,43 @@ namespace InnoGotchi.API.Controllers
             catch(Exception ex)
             {
                 var apiResult = ApiResult<UserModel>.Failure(new[] { ex.Message });
+                return Problem(detail: JsonSerializer.Serialize(apiResult));
+            }
+        }
+
+        [HttpGet("GetUsers")]
+        public async Task<IActionResult> GetUsers(int startIndex, int endIndex)
+        {
+            try
+            {
+                var requestedUsers = await _userService.GetUsers(startIndex, endIndex);
+                var apiResult = ApiResult<IEnumerable<UserModel>>.Success(requestedUsers);
+                return Ok(apiResult);
+            }
+            catch (Exception ex)
+            {
+                var apiResult = ApiResult<List<UserModel>>.Failure(new[] { ex.Message });
+                return Problem(detail: JsonSerializer.Serialize(apiResult));
+            }
+        }
+
+        [HttpPost("password")]
+        public async Task<IActionResult> ChangePassword(UserPasswordViewModel userPassword)
+        {
+            try
+            {
+                if(userPassword.NewPassword == userPassword.ConfirmPassword)
+                {
+                    var response = await _userService.ChangePassword(userPassword.OldPassword, userPassword.NewPassword);
+                    var apiResultOk = ApiResult<string>.Success(response);
+                    return Ok(apiResultOk);
+                }
+                var apiResultBad = ApiResult<string>.Failure(new[] { "Password isn't match" });
+                return BadRequest(apiResultBad);
+            }
+            catch (Exception ex)
+            {
+                var apiResult = ApiResult<string>.Failure(new[] { ex.Message });
                 return Problem(detail: JsonSerializer.Serialize(apiResult));
             }
         }

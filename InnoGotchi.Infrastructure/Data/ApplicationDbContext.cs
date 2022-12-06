@@ -10,6 +10,8 @@ namespace InnoGotchi.Infrastructure.Data
         public DbSet<Pet> Pets { get; set; }
         public DbSet<Farm> Farm { get; set; }
         public DbSet<Role> Roles { get; set; }
+        public DbSet<UserStatistics> UserStatistics { get; set; }
+        public DbSet<PetsBody> PetsBodies { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -17,6 +19,8 @@ namespace InnoGotchi.Infrastructure.Data
             modelBuilder.Entity<Pet>(ConfigurePet);
             modelBuilder.Entity<Farm>(ConfigureFarm);
             modelBuilder.Entity<User>(ConfigureUser);
+            modelBuilder.Entity<PetsBody>(ConfigurePetsBody);
+            modelBuilder.Entity<UserStatistics>(ConfigureUserStatistics);
         }
 
         private void ConfigurePet(EntityTypeBuilder<Pet> builder)
@@ -40,9 +44,12 @@ namespace InnoGotchi.Infrastructure.Data
                 .OnDelete(DeleteBehavior.NoAction);
 
             builder.HasOne(x => x.User)
-                .WithOne(x => x.MyOwnFarm)
+                .WithOne(u => u.MyOwnFarm)
                 .HasForeignKey<User>(p => p.Id)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Property(x => x.UserId)
+                .HasDefaultValue(0);
 
         }
 
@@ -52,13 +59,33 @@ namespace InnoGotchi.Infrastructure.Data
                 .WithOne(u => u.User)
                 .OnDelete(DeleteBehavior.NoAction);
 
+            builder.Property(x => x.FarmId)
+                .HasDefaultValue(0);
+
 
             builder.HasOne(x => x.MyOwnFarm)
-                .WithOne(x => x.User)
+                .WithOne(u => u.User)
                 .HasForeignKey<Farm>(p => p.Id)
                 .OnDelete(DeleteBehavior.NoAction);
         }
-        
+
+        private void ConfigurePetsBody(EntityTypeBuilder<PetsBody> builder)
+        {
+            builder.HasOne(x => x.Pet)
+                .WithOne(u => u.PetsBody)
+                .HasForeignKey<Pet>(p => p.Id)
+                .OnDelete(DeleteBehavior.NoAction);
+
+        }
+
+        private void ConfigureUserStatistics(EntityTypeBuilder<UserStatistics> builder)
+        {
+            builder.HasOne(x => x.User)
+                 .WithOne(u => u.Statistics)
+                 .HasForeignKey<UserStatistics>(p => p.Id)
+                 .OnDelete(DeleteBehavior.NoAction);
+        }
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
